@@ -1,0 +1,19 @@
+aws-3tier-python-app/
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+├── app/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── main.py
+├── docker-compose.yml
+├── infra/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── modules/
+│       ├── vpc/
+│       ├── ec2/
+│       ├── rds/
+│       └── alb/
+└── README.md

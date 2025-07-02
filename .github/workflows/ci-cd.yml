@@ -1,0 +1,37 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-east-1
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t ${{ secrets.ECR_REPO }} ./app
+        docker tag ${{ secrets.ECR_REPO }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO }}:latest
+        docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO }}:latest
+
+    - name: Terraform Init and Apply
+      working-directory: ./infra
+      run: |
+        terraform init
+        terraform apply -auto-approve -var="docker_image=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO }}:latest"

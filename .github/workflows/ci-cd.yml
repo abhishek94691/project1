@@ -31,7 +31,7 @@ jobs:
         
     - name: Build and Push Docker Image
       run: |
-        docker build -t ${{ secrets.ECR_REPO }} .
+        docker build -t ${{ secrets.ECR_REPO }} ./app
         docker tag ${{ secrets.ECR_REPO }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO }}:latest
         docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO }}:latest
     

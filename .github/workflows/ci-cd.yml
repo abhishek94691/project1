@@ -35,6 +35,11 @@ jobs:
         docker tag ${{ secrets.ECR_REPO }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO }}:latest
         docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO }}:latest
     
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.6.6  
+
     - name: Terraform Init and Apply
       working-directory: ./infra
       run: |
